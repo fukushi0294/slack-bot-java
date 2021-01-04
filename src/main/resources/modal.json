@@ -1,0 +1,32 @@
+{
+  "type": "modal",
+  "callback_id": "meeting-arrangement",
+  "notify_on_close": true,
+  "title": { "type": "plain_text", "text": "Meeting Arrangement" },
+  "submit": { "type": "plain_text", "text": "Submit" },
+  "close": { "type": "plain_text", "text": "Cancel" },
+  "private_metadata": "{\"response_url\":\"https://hooks.slack.com/actions/T1ABCD2E12/330361579271/0dAEyLY19ofpLwxqozy3firz\"}",
+  "blocks": [
+    {
+      "type": "section",
+      "block_id": "category-block",
+      "text": { "type": "mrkdwn", "text": "Select a category of the meeting!" },
+      "accessory": {
+        "type": "static_select",
+        "action_id": "category-selection-action",
+        "placeholder": { "type": "plain_text", "text": "Select a category" },
+        "options": [
+          { "text": { "type": "plain_text", "text": "Customer" }, "value": "customer" },
+          { "text": { "type": "plain_text", "text": "Partner" }, "value": "partner" },
+          { "text": { "type": "plain_text", "text": "Internal" }, "value": "internal" }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "agenda-block",
+      "element": { "action_id": "agenda-action", "type": "plain_text_input", "multiline": true },
+      "label": { "type": "plain_text", "text": "Detailed Agenda" }
+    }
+  ]
+}

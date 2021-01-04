@@ -1,0 +1,17 @@
+logging.level:
+  com.slack.api: DEBUG
+server:
+  port: 3000
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8083/auth/realms/baeldung
+
+aws:
+  region: ap-northeast-1
+  dynamodb:
+    timeRecord: time-record
+    indenitity: user-identity
