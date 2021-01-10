@@ -10,9 +10,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests(auth -> auth
+        http.authorizeRequests()
                 .antMatchers("/v1/api/**").authenticated()
-                .anyRequest().authenticated())
+                .anyRequest().permitAll()
+                .and()
+                .oauth2Login()
+                .and()
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .csrf()
                 .disable()
