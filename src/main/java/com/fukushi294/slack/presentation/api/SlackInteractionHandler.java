@@ -6,6 +6,7 @@ import com.slack.api.bolt.context.builtin.ViewSubmissionContext;
 import com.slack.api.bolt.request.builtin.ViewSubmissionRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.methods.response.views.ViewsOpenResponse;
+import com.slack.api.model.event.AppHomeOpenedEvent;
 import com.slack.api.model.view.ViewState;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -16,29 +17,43 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class CommandHandler {
+public class SlackInteractionHandler {
     private final App app;
     private final TimeRecordService timeRecordService;
+    private final String homeViewString;
     private final String modalViewString;
 
-    public CommandHandler(App app,
-                          TimeRecordService timeRecordService) throws IOException {
+    public SlackInteractionHandler(App app,
+                                   TimeRecordService timeRecordService) throws IOException {
         this.app = app;
         this.timeRecordService = timeRecordService;
-        ClassPathResource modalResource = new ClassPathResource("modal.json");
-        this.modalViewString = new String(modalResource.getInputStream().readAllBytes());
+        this.homeViewString = readJsonViewAsString("view/home.json");
+        this.modalViewString = readJsonViewAsString("view/modal.json");
+    }
+
+    private String readJsonViewAsString(String resourcePath) throws IOException {
+        var resource = new ClassPathResource(resourcePath);
+        return new String(resource.getInputStream().readAllBytes()).replaceAll("\\r\\n|\\n", "");
     }
 
     @PostConstruct
     public void setCommandAction() {
-        app.command("/meeting", (req, ctx) -> {
+        app.viewSubmission("meeting-arrangement", this::viewSubmissionAction);
+        app.event(AppHomeOpenedEvent.class, (payload, ctx) -> {
+            ctx.client().viewsPublish(r -> r
+                    .userId(payload.getEvent().getUser())
+                    .viewAsString(homeViewString)
+            );
+            return ctx.ack();
+        });
+
+        app.blockAction("add_note", (req, ctx) -> {
             ViewsOpenResponse viewsOpenRes = ctx.client().viewsOpen(r -> r
                     .triggerId(ctx.getTriggerId())
                     .viewAsString(modalViewString));
             if (viewsOpenRes.isOk()) return ctx.ack();
             else return Response.builder().statusCode(500).body(viewsOpenRes.getError()).build();
         });
-        app.viewSubmission("meeting-arrangement", this::viewSubmissionAction);
     }
 
     private Response viewSubmissionAction(ViewSubmissionRequest req, ViewSubmissionContext ctx) {

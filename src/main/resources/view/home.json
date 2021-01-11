@@ -1,0 +1,33 @@
+{
+  "type": "home",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Welcome!* \nThis is a home for Stickers app. You can add small notes here!"
+      },
+      "accessory": {
+        "type": "button",
+        "action_id": "add_note",
+        "text": {
+          "type": "plain_text",
+          "text": "Add a Stickie",
+          "emoji": true
+        }
+      }
+    },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": ":wave: Hey, my source code is on <https://glitch.com/edit/#!/apphome-demo-note|glitch>!"
+        }
+      ]
+    },
+    {
+      "type": "divider"
+    }
+  ]
+}
